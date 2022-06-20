@@ -1,5 +1,5 @@
-import BashColors
-import glob, json, numpy, os
+from BashColors import C
+import glob, json, numpy, os, pprint
 class EncodeFromNumpy(json.JSONEncoder):
     """
     - Serializes python/Numpy objects via customizing json encoder.
@@ -62,8 +62,9 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
     
     def __init__(self):
         """init"""
-        # self.pp = pprint.PrettyPrinter()
-        self.created = self.getDate()
+        self.pp = pprint.PrettyPrinter()
+        self.created=self.inspectJsonFile(
+            'JsonUtilsCreationDate.json')
         self.contentPath = os.getcwd()
         self.jsonFileSet = {'q'}
         self.jsonFileSet.remove('q')
@@ -73,12 +74,14 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
         """iter"""
         return self
     
-    def getDate(self):
-        '''returns date and time strain'''
+    def getDate(self, silent=True):
+        '''Returns date and time string'''
         import time
         secs = time.time()
         secs = secs - (5 * 60 * 60)
         date = time.ctime(secs)
+        if not silent:
+            print(date)
         return str(date)
 
     def listJsonFiles(self, C=C):
@@ -89,9 +92,8 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
                 fil = os.path.abspath(fil)
                 self.jsonFileSet.add(fil)
                 print(f'{C.BICyan}{fil}{C.ColorOff}')
-        else:
-            print(f'{C.BIRed}No JSON files exist.{C.ColorOff}')
-        print()
+        else: print(f'{C.BIRed}No JSON files exist.{C.ColorOff}')
+            
 
     def createJsonFile(self, name:str, input_data:any):
             ''' '''
@@ -106,15 +108,16 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
                 print(f'{C.BIGreen}{name}{C.ColorOff} file is created')
                 return newFile
 
-    def inspectJsonFile(self, existing:str):
+    def inspectJsonFile(self, existing:str, silent=True):
         ''' '''
         with open(existing, 'r') as fil:
             newFile = json.load(fil)
-            pp.pprint(newFile)
+            if not silent:
+                self.pp.pprint(newFile)
             return newFile
         
-    def getMethodList(silent=True):
-        ''' '''
+    def getMethodList(self, silent=True):
+        '''List all methods in JsonNumpyUtils.\n Print silent = True'''
         methodList=[]
         for item in dir(jnu):
             if not item.__contains__('__'):
