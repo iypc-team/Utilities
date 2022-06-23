@@ -1,5 +1,8 @@
 from BashColors import C
+from TarfileFunctions import *
 import glob, json, numpy, os, pprint
+from os.path import *
+
 class EncodeFromNumpy(json.JSONEncoder):
     """
     - Serializes python/Numpy objects via customizing json encoder.
@@ -68,13 +71,16 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
         self.contentPath = os.getcwd()
         self.jsonFileSet = {'q'}
         self.jsonFileSet.remove('q')
+        self.jsonFilesPath=join(self.contentPath, 'jsonFiles')
+        if not os.path.exists(self.jsonFilesPath):
+            os.makedirs(self.jsonFilesPath)
         self.jnu = JsonNumpyUtils
         
     def __iter__(self):
         """iter"""
         return self
     
-    def getDate(self, silent=True):
+    def getDateTime(self, silent=True):
         '''Returns date and time string'''
         import time
         secs = time.time()
@@ -125,4 +131,31 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
                 if not silent:
                     print(item)
         return methodList
+
+    def gzipJsonTarFile(self, silent=True):
+        '''collects json files and creates a tar.gz file\nsilent=True'''
+        # from TarfileFunctions import tarfileFromDirectory, listTarfiles
+        import glob, shutil
+        jsonGlob=glob.glob('*.json')
+        if exists(self.jsonFilesPath): # and isdir(jnu.jsonFilesPath):
+            for fil in sorted(jsonGlob):
+                fullPath=abspath(fil)
+                copyToPath=join(jnu.jsonFilesPath, fil)
+                if not silent:
+                    print(fil)
+                    print(fullPath)
+                    print(copyToPath)
+                if not exists(copyToPath):
+                    shutil.copy2(src=fullPath, dst=copyToPath)
+                    print(f'copied: {C.BIGreen}{fil}{C.ColorOff}\n')
+                else: print(f'copied: {C.BIRed}{fil} already exists.{C.ColorOff}\n')
+                # jnu.jsonFileSet.update(fil)
+
+        print(f'creating: {C.BIGreen}JsonFiles.tar.gz{C.ColorOff}')
+        tff.tarfileFromDirectory(output_filename='JsonFiles.tar.gz',
+                                source_dir=jnu.jsonFilesPath)
+        
 jnu=JsonNumpyUtils()
+
+print(f'today date: {C.BICyan}{jnu.getDateTime()}{C.ColorOff}')
+print(f'jnu created: {C.BIGreen}{jnu.created}{C.ColorOff}')
