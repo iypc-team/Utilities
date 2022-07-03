@@ -1,70 +1,13 @@
+from __future__ import absolute_import, unicode_literals
 from BashColors import C
 from TarfileFunctions import *
 import glob, json, numpy, os, pprint
+from json import JSONEncoder
 from os.path import *
 
-class EncodeFromNumpy(json.JSONEncoder):
-    """
-    - Serializes python/Numpy objects via customizing json encoder.
-    - **Usage**
-        - `json.dumps(python_dict, cls = EncodeFromNumpy)` to get json string.
-        - `json.dump(*args, cls = EncodeFromNumpy)` to create a file.json.
-    """
-    from  BashColors import C
-    import json, numpy
-    
-    def default(self, obj):
-        import numpy
-        if isinstance(obj, numpy.ndarray):
-            return {
-                "_kind_": "ndarray",
-                "_value_": obj.tolist()
-            }
-        if isinstance(obj, numpy.integer):
-            return int(obj)
-        elif isinstance(obj, numpy.floating):
-            return float(obj)
-        elif isinstance(obj,range):
-            value = list(obj)
-            return {
-                "_kind_" : "range",
-                "_value_" : [value[0],value[-1]+1]
-            }
-        return super(EncodeFromNumpy, self).default(obj)
-    
-class DecodeToNumpy(json.JSONDecoder):
-    """
-    - Deserilizes JSON object to Python/Numpy's objects.
-    - **Usage**
-        - `json.loads(json_string,cls = DecodeToNumpy)` from string, use `json.load()` for file.
-    """
-    import json
-    def __init__(self, *args, **kwargs):
-        json.JSONDecoder.__init__(self, object_hook = self.object_hook, *args, **kwargs)
-        # self.jsonFileSet = {'q'}
-        # self.jsonFileSet.remove('q')
-        # self.listJsonFiles()
-
-    def object_hook(self, obj):
-        import numpy
-        if '_kind_' not in obj:
-            return obj
-        kind = obj['_kind_']
-        if kind == 'ndarray':
-            return numpy.array(obj['_value_'])
-        elif kind ==  'range':
-            value = obj['_value_']
-            return range(value[0],value[-1])
-        return obj
-
-class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
-    ''' '''
-    from BashColors import C
-    import glob, json # , os, pprint
-    # os.environ['TZ']
-    
+class Parent(object):
     def __init__(self):
-        """init"""
+        print(f"{C.BIGreen}parent{C.ColorOff}")
         self.pp = pprint.PrettyPrinter()
         self.created=self.inspectJsonFile(
             'JsonUtilsCreationDate.json')
@@ -74,11 +17,16 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
         self.jsonFilesPath=join(self.contentPath, 'jsonFiles')
         if not os.path.exists(self.jsonFilesPath):
             os.makedirs(self.jsonFilesPath)
+        self.Checksum_JsonNumpyUtils = self.getCheckSum()
         self.jnu = JsonNumpyUtils
+        super(object, self).__init__()
         
     def __iter__(self):
         """iter"""
         return self
+    
+    def __str__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
     
     def getDateTime(self, silent=True):
         '''Returns date and time string'''
@@ -100,7 +48,6 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
                 print(f'{C.BICyan}{fil}{C.ColorOff}')
         else: print(f'{C.BIRed}No JSON files exist.{C.ColorOff}')
             
-
     def createJsonFile(self, name:str, input_data:any):
             ''' '''
             from BashColors import C
@@ -155,7 +102,87 @@ class JsonNumpyUtils(EncodeFromNumpy, DecodeToNumpy):
         tff.tarfileFromDirectory(output_filename='JsonFiles.tar.gz',
                                 source_dir=jnu.jsonFilesPath)
         
-jnu=JsonNumpyUtils()
+    def getCheckSum(
+        file_path='JsonNumpyUtils.py', compare_to=None, silent=True):
+        ''' '''
+    # Import hashlib library (md5 method is part of it)
+        import hashlib
+        # File to check
+        file_path = 'JsonNumpyUtils.py'
+        # Correct original md5 goes here
+        original_md5 = str(compare_to)
+        # Open,close, read file and calculate MD5 on its contents 
+        with open(file_path, 'rb') as file_to_check:
+            # read contents of the file
+            data = file_to_check.read()    
+            # pipe contents of the file through
+            md5_returned = hashlib.md5(data).hexdigest()
+            if silent:
+                return md5_returned
+            elif not silent:
+                # print(md5_returned)
+                # Finally compare original MD5 with freshly calculated
+                if original_md5 == md5_returned:
+                    print(f"{C.BIGreen}MD5 verified{C.ColorOff}")
+                else: print(f"{C.BIRed}MD5 verification failed!{C.ColorOff}")
+                return md5_returned
+        
+        super(Parent, self).__init__()
 
-print(f'today date: {C.BICyan}{jnu.getDateTime()}{C.ColorOff}')
-print(f'jnu created: {C.BIGreen}{jnu.created}{C.ColorOff}')
+class NumpyArrayEncoder(Parent):
+    """
+    - Serializes python/Numpy objects via customizing json encoder.
+    - **Usage**
+        - `json.dumps(python_dict, cls=EncodeFromNumpy)` to get json string.
+        - `json.dump(*args, cls=EncodeFromNumpy)` to create a file.json.
+    """
+    def __init__(self):
+        print(f"{C.BIGreen}{'NumpyArrayEncoder'}{C.ColorOff}")
+        super(NumpyArrayEncoder, self).__init__()
+        
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NumpyArrayEncoder, self).default(obj)
+        
+
+class DecodeToNumpy(Parent):
+    """
+    - Serializes python/Numpy objects via customizing json encoder.
+    - **Usage**
+        - `json.dumps(python_dict, cls=EncodeFromNumpy)` to get json string.
+        - `json.dump(*args, cls=EncodeFromNumpy)` to create a file.json.
+    """
+    def __init__(self, *args, **kwargs):
+        print(f"{C.BIGreen}DecodeToNumpy{C.ColorOff}")
+        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+        super(DecodeToNumpy, self).__init__()
+
+    def object_hook(self, obj):
+        import numpy
+        if '_kind_' not in obj:
+            return obj
+        kind = obj['_kind_']
+        if kind == 'ndarray':
+            return numpy.array(obj['_value_'])
+        elif kind == 'range':
+            value = obj['_value_']
+            return range(value[0],value[-1])
+        return obj
+        
+        
+
+class JsonNumpyUtils(NumpyArrayEncoder, DecodeToNumpy):
+    def __init__(self):
+        print(f"{C.BIGreen}JsonNumpyUtils{C.ColorOff}")
+        self.mro = 'Class Resolution order: JsonNumpyUtils left right parent'
+        super(JsonNumpyUtils, self).__init__()
+        
+jnu=JsonNumpyUtils()
+print(jnu.mro)
+print(jnu.__dict__)
