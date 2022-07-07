@@ -38,14 +38,17 @@ class Parent(object):
             print(date)
         return str(date)
 
-    def listJsonFiles(self, C=C):
+    def listJsonFiles(self, silent=True):
         json_files = glob.glob('*.json', recursive = True)
         if len(json_files) !=  0:
-            print('\nJson files...')
+            if not silent:
+                print('\nJson files...')
             for fil in sorted(json_files):
                 fil = os.path.abspath(fil)
+                fil = str(fil)
                 self.jsonFileSet.add(fil)
-                print(f'{C.BICyan}{fil}{C.ColorOff}')
+                if not silent:
+                    print(f'{C.ColorOff}{fil}{C.ColorOff}')
         else: print(f'{C.BIRed}No JSON files exist.{C.ColorOff}')
             
     def createJsonFile(self, name:str, input_data:any):
@@ -174,8 +177,6 @@ class DecodeToNumpy(Parent):
             value = obj['_value_']
             return range(value[0],value[-1])
         return obj
-        
-        
 
 class JsonNumpyUtils(NumpyArrayEncoder, DecodeToNumpy):
     def __init__(self):
@@ -184,5 +185,3 @@ class JsonNumpyUtils(NumpyArrayEncoder, DecodeToNumpy):
         super(JsonNumpyUtils, self).__init__()
         
 jnu=JsonNumpyUtils()
-print(jnu.mro)
-print(jnu.__dict__)
