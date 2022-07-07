@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 from BashColors import C
 from TarfileFunctions import *
 import glob, json, numpy, os, pprint
+import numpy as np
 from json import JSONEncoder
 from os.path import *
 
@@ -143,7 +144,9 @@ class NumpyArrayEncoder(Parent):
         print(f"{C.BIGreen}{'NumpyArrayEncoder'}{C.ColorOff}")
         super(NumpyArrayEncoder, self).__init__()
         
-    def default(self, obj):
+    def encodeNumpy(self, obj):
+        if isinstance(obj, np.str):
+            return str(obj)
         if isinstance(obj, np.integer):
             return int(obj)
         elif isinstance(obj, np.floating):
