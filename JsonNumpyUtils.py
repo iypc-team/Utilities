@@ -15,6 +15,7 @@ class Parent(object):
         self.contentPath = os.getcwd()
         self.jsonFileSet = {'q'}
         self.jsonFileSet.remove('q')
+        self.listJsonFiles()
         self.jsonFilesPath=join(self.contentPath, 'jsonFiles')
         if not os.path.exists(self.jsonFilesPath):
             os.makedirs(self.jsonFilesPath)
