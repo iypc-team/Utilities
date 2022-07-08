@@ -19,7 +19,7 @@ class Parent(object):
         self.jsonFilesPath=join(self.contentPath, 'jsonFiles')
         if not os.path.exists(self.jsonFilesPath):
             os.makedirs(self.jsonFilesPath)
-        self.Checksum_JsonNumpyUtils = self.getCheckSum()
+        self.checksum = self.getCheckSum()
         self.jnu = JsonNumpyUtils
         super(object, self).__init__()
         
@@ -76,13 +76,21 @@ class Parent(object):
         
     def getMethodList(self, silent=True):
         '''List all methods in JsonNumpyUtils.\n Print silent = True'''
-        methodList=[]
-        for item in dir(jnu):
-            if not item.__contains__('__'):
-                methodList.append(item)
-                if not silent:
-                    print(item)
-        return methodList
+        method_list=[]
+        for attribute in dir(jnu):
+            # Get the attribute value
+            attribute_value = getattr(jnu, attribute)
+            # Check that it is callable
+            if callable(attribute_value):
+                # Filter all dunder (__ prefix) methods
+                if attribute.startswith('__') == False:
+                    method_list.append(attribute)
+        
+        if not silent:
+            print(f'{len(method_list)} callable methods in JsonNumpyUtils.py')
+            for method in method_list:
+                print(method)
+        return method_list
 
     def gzipJsonTarFile(self, silent=True):
         '''collects json files and creates a tar.gz file\nsilent=True'''
