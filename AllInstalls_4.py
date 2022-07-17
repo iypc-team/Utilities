@@ -5,6 +5,7 @@ from TarfileFunctions import *
 
 from subprocess import check_output, CalledProcessError, STDOUT
 import concurrent.futures, glob, json, pip, os, sys
+from concurrent.futures import ThreadPoolExecutor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
 from time import perf_counter, sleep
@@ -15,7 +16,7 @@ jsonPath=join(contentPath, 'initialGlobList.json')
 if exists(jsonPath):
     os.remove(jsonPath)
     pass
-    
+
 if not exists(jsonPath):
     initialGlobList=glob.glob('**', recursive=True)
     initialGlobList=glob.glob('**', recursive=True)
@@ -37,7 +38,7 @@ class AllInstalls4(object):
         else: pass
             # print(f"pip: {C.BIPurple}{pip.__version__}{C.ColorOff}")
         self.__all__ = self.getMethodList()
-        
+
         self.contentPath = os.getcwd()
         self.generatorPath = join(self.contentPath, 'DataGenerator')
         self.testPath = join(self.contentPath, 'images')
@@ -61,18 +62,22 @@ class AllInstalls4(object):
         self.jsonFilesPath = join(self.contentPath, 'jsonFiles')
         if not os.path.exists(self.jsonFilesPath):
             os.makedirs(self.jsonFilesPath)
-        # self.systemCall(["pip3", "install", "-U", "numpy"])
+
+        self.silentSystemCall(["pip3", "install", "-q", "-U", "numpy"])
+        self.silentSystemCall(["pip3", "install", "-q", "-U", "matplotlib"])
+        self.silentSystemCall(["pip3", "install", "-q", "-U", "opencv-python-headless"])
+        self.silentSystemCall(["pip3", "install", "-q", "-U", "tensorflow"])
         
         self.ai4 = AllInstalls4
         super(object, self).__init__()
-        
+
     def __iter__(self):
         return self
     def __len__(self):
         return len(self.name)
     def __str__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
-    
+
     def getMethodList(self, silent=True):
         '''List all methods in AllInstalls4\n Print silent = True'''
         method_list=[]
@@ -89,7 +94,7 @@ class AllInstalls4(object):
             for method in method_list:
                 print(method)
         return method_list
-    
+
     def listNewFiles(self, deleteNew = False):
         '''Lists newly created files'''
         initial = self.initialGlobList
@@ -107,7 +112,7 @@ class AllInstalls4(object):
                     print(f'{C.ColorOff}{fil}')
                     if deleteNew:
                         os.remove(fil)
-    
+
     def getDateTime(self, silent=True):
         '''Returns date and time string'''
         import time
@@ -117,7 +122,7 @@ class AllInstalls4(object):
         if not silent:
             print(date)
         return str(date)
-    
+
     def listSystemModules(self, silent=True):
         '''List system installed modules'''
         # 233 modules installed at start
@@ -128,7 +133,7 @@ class AllInstalls4(object):
                 if not silent:
                     print(f'{idx} {C.BIBlue}{item}{C.ColorOff}')
         print(f'{idx} system modules installed')
-        
+
     def printTime(self, strt, fin = None):
         '''print execution times '''
         if fin ==  None:
@@ -143,6 +148,28 @@ class AllInstalls4(object):
             seconds = round(seconds, 2)
             print(f'completed: {C.BIPurple}{minutes} minutes {seconds} second(s){C.ColorOff}')
             
+    def silentSystemCall(self, command, silent=True):
+        """
+        params:
+            command: list of strings, `["pip3", "install", "-q", "-U", "pip"]`
+            if not silent...
+            returns: output, success
+        """
+        try:
+            output = check_output(command, stderr=STDOUT).decode()
+            success = True 
+        except CalledProcessError as e:
+            output = e.output.decode()
+            success = False
+        if not silent:
+            print(command)
+            if success:
+                print(f'success: {C.BIGreen}{success}{C.ColorOff}\n{output}')
+            elif not success:
+                print(f'success: {C.BIRed}{success}{C.ColorOff}\n{output}')
+            return output, success
+
+
     def systemCall(self, command):
         """ 
         params:
@@ -168,7 +195,7 @@ class AllInstalls4(object):
         output, success = self.systemCall(["pip3", "install", "-q", "pip==22.0.4"])
         print(f'completed: {C.BIGreen}pip{C.ColorOff}')
         # return f'completed: {C.BIGreen}pip{C.ColorOff}'
-        
+
     def getTensorflow(self):
         ''' '''
         print(f'installing: {C.BIPurple}tensorflow{C.ColorOff}')
@@ -186,7 +213,7 @@ class AllInstalls4(object):
         # !pip install -q -U tfx
         print(f'completed: {C.BIGreen}TFX{C.ColorOff}')
         # return f'completed: {C.BIGreen}TFX{C.ColorOff}'
-        
+
     def getApache(self):
         ''' '''
         print(f'installing: {C.BIPurple}apache-beam[interactive]{C.ColorOff}')
@@ -355,5 +382,4 @@ class AllInstalls4(object):
         # !pip install -q -U python-swiftclient
         print(f'completed: {C.BIGreen}SwiftClient{C.ColorOff}')
         # return f'completed: {C.BIGreen}Swift client{C.ColorOff}'
-        
 ai4 = AllInstalls4()
