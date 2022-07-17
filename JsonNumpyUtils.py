@@ -17,7 +17,7 @@ from os.path import *
 
 class Parent(object):
     def __init__(self):
-        print(f"{C.BIGreen}parent{C.ColorOff}")
+        print(f"{C.BIGreen}Parent{C.ColorOff}")
         self.pp = pprint.PrettyPrinter()
         try: self.created=self.inspectJsonFile(
             'JsonUtilsCreationDate.json')
@@ -77,9 +77,9 @@ class Parent(object):
                 print(f'{C.BIGreen}{name}{C.ColorOff} file is created')
                 return newFile
 
-    def inspectJsonFile(self, existing:str, silent=True):
+    def inspectJsonFile(self, existingPath:str, silent=True):
         ''' '''
-        with open(existing, 'r') as fil:
+        with open(existingPath, 'r') as fil:
             newFile = json.load(fil)
             if not silent:
                 self.pp.pprint(newFile)
