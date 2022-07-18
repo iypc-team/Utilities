@@ -62,11 +62,18 @@ class AllInstalls4(object):
         self.jsonFilesPath = join(self.contentPath, 'jsonFiles')
         if not os.path.exists(self.jsonFilesPath):
             os.makedirs(self.jsonFilesPath)
-
-        self.silentSystemCall(["pip3", "install", "-q", "-U", "numpy"])
-        self.silentSystemCall(["pip3", "install", "-q", "-U", "matplotlib"])
-        self.silentSystemCall(["pip3", "install", "-q", "-U", "opencv-python-headless"])
-        self.silentSystemCall(["pip3", "install", "-q", "-U", "tensorflow"])
+        start = perf_counter()
+        with ThreadPoolExecutor() as executor: # max_workers = 1
+            thread0 = executor.submit(self.silentSystemCall(
+                ["pip3", "install", "-q", "-U", "tensorflow"]))
+            thread1 = executor.submit(self.silentSystemCall(
+                ["pip3", "install", "-q", "-U", "matplotlib"]))
+            thread2 = executor.submit(self.silentSystemCall(
+                ["pip3", "install", "-q","-U", "opencv-python-headless"]))
+            thread3 = executor.submit(self.silentSystemCall(
+                ["pip3", "install", "-q", "-U", "numpy"]))
+        print(f'{C.BIYellow}Pre installs completed…{C.ColorOff}')
+        self.printTime(start)
         
         self.ai4 = AllInstalls4
         super(object, self).__init__()
