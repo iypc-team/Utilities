@@ -64,8 +64,8 @@ class AllInstalls4(object):
             os.makedirs(self.jsonFilesPath)
         start = perf_counter()
         with ThreadPoolExecutor() as executor: # max_workers = 1
-            thread0 = executor.submit(self.silentSystemCall(
-                ["pip3", "install", "-q", "-U", "tensorflow"]))
+            thread0 = executor.submit(self.systemCall(
+                ["pip3", "install", "-q", "-U", "tfx"]))
             thread1 = executor.submit(self.silentSystemCall(
                 ["pip3", "install", "-q", "-U", "matplotlib"]))
             thread2 = executor.submit(self.silentSystemCall(
@@ -148,7 +148,7 @@ class AllInstalls4(object):
         totalTime = fin - strt
         totalTime =  round(totalTime, 0)
         if totalTime < 60.0:
-            print(f'completed: {C.BIPurple}{totalTime} second(s){C.ColorOff}')
+            print(f'completed in: {C.BIPurple}{totalTime} second(s){C.ColorOff}')
         elif totalTime >=  60.0:
             minutes = totalTime//60
             seconds = totalTime - (minutes * 60)
