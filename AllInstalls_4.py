@@ -62,6 +62,8 @@ class AllInstalls4(object):
         self.jsonFilesPath = join(self.contentPath, 'jsonFiles')
         if not os.path.exists(self.jsonFilesPath):
             os.makedirs(self.jsonFilesPath)
+            
+        print(f'{C.BIYellow}Pre install modules{C.ColorOff}')
         start = perf_counter()
         with ThreadPoolExecutor() as executor: # max_workers = 1
             thread0 = executor.submit(self.systemCall(
@@ -153,7 +155,7 @@ class AllInstalls4(object):
             minutes = totalTime//60
             seconds = totalTime - (minutes * 60)
             seconds = round(seconds, 2)
-            print(f'completed: {C.BIPurple}{minutes} minutes {seconds} second(s){C.ColorOff}')
+            print(f'completed in: {C.BIPurple}{minutes} minutes {seconds} second(s){C.ColorOff}')
             
     def silentSystemCall(self, command, silent=True):
         """
@@ -215,7 +217,7 @@ class AllInstalls4(object):
         ''' '''
         print(f'installing: {C.BIPurple}TFX{C.ColorOff}')
         # output, success = self.systemCall(["pip3", "install", "-q", "-U", "tfx"])
-        output, success = self.systemCall(["pip", "install", "tfx"])
+        output, success = self.systemCall(["pip", "install", "-q", "-U", "tfx"])
         # output, success = self.systemCall("pip3 install tfx")
         # !pip install -q -U tfx
         print(f'completed: {C.BIGreen}TFX{C.ColorOff}')
