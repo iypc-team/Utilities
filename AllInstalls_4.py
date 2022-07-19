@@ -5,6 +5,7 @@ from TarfileFunctions import *
 
 from subprocess import check_output, CalledProcessError, STDOUT
 import concurrent.futures, glob, json, pip, os, sys
+import pkg_resources
 from concurrent.futures import ThreadPoolExecutor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
@@ -65,15 +66,17 @@ class AllInstalls4(object):
             
         print(f'{C.BIYellow}Pre install modules{C.ColorOff}')
         start = perf_counter()
-        with ThreadPoolExecutor() as executor: # max_workers = 1
-            thread0 = executor.submit(self.systemCall(
-                ["pip3", "install", "-q", "-U", "tfx"]))
-            thread1 = executor.submit(self.silentSystemCall(
-                ["pip3", "install", "-q", "-U", "matplotlib"]))
-            thread2 = executor.submit(self.silentSystemCall(
-                ["pip3", "install", "-q","-U", "opencv-python-headless"]))
-            thread3 = executor.submit(self.silentSystemCall(
-                ["pip3", "install", "-q", "-U", "numpy"]))
+        if not self.checkPackageAvailability('tfx', silent=False):
+            self.systemCall(["pip3", "install", "-q", "-U", "tfx"])
+        if not self.checkPackageAvailability('matplotlib', silent=False):
+            self.silentSystemCall(
+                ["pip3", "install", "-q", "-U", "matplotlib"])
+        if not self.checkPackageAvailability('opencv-python-headless', silent=False):
+            self.silentSystemCall(
+                ["pip3", "install", "-q","-U", "opencv-python-headless"])
+        if not self.checkPackageAvailability('numpy', silent=False):
+            self.silentSystemCall(
+            ["pip3", "install", "-q", "-U", "numpy"])
         print(f'{C.BIYellow}Pre installs completed…{C.ColorOff}')
         self.printTime(start)
         
@@ -390,5 +393,32 @@ class AllInstalls4(object):
         output, success = self.systemCall(["pip3", "install", "-q", "-U", "python-swiftclient"])
         # !pip install -q -U python-swiftclient
         print(f'completed: {C.BIGreen}SwiftClient{C.ColorOff}')
-        # return f'completed: {C.BIGreen}Swift client{C.ColorOff}'
+        # return f'completed: {C.BIGreen}Swift client{C.ColorOff}
+        
+    def listInstalledModules(self):
+        '''List installed modules with version number'''
+        installed_packages = pkg_resources.working_set
+        installedPackagesList = sorted(
+            ["%s==%s" % (i.key, i.version) for i in installed_packages])
+
+        packageCount=0
+        for package in installedPackagesList:
+            packageCount+=1
+            print(packageCount, package)
+
+    def checkPackageAvailability(self, packageName:str, silent=True):
+        packageName=str(packageName)
+        '''checks for package availability returns:boolean True/False'''
+        installed_packages = pkg_resources.working_set
+        packagesList = sorted(
+            ["%s" % i.key for i in installed_packages]
+        )
+        if not packageName in packagesList:
+            if  not silent:
+                print(f'{C.BIPurple}{packageName} is not installed{C.ColorOff}')
+            return False
+        else:
+            if not silent:
+                print(f'{C.BIGreen}{packageName} is installed{C.ColorOff}')
+            return True
 ai4 = AllInstalls4()
