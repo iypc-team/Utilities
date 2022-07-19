@@ -17,7 +17,7 @@ from os.path import *
 
 class Parent(object):
     def __init__(self):
-        print(f"{C.BIGreen}Parent{C.ColorOff}")
+        print(f"{C.BIGreen}parent{C.ColorOff}")
         self.pp = pprint.PrettyPrinter()
         try: self.created=self.inspectJsonFile(
             'JsonUtilsCreationDate.json')
@@ -100,8 +100,8 @@ class Parent(object):
                     print(copyToPath)
                 if not exists(copyToPath):
                     shutil.copy2(src=fullPath, dst=copyToPath)
-                    print(f'copied: {C.BIGreen}{fil}{C.ColorOff}\n')
-                else: print(f'copied: {C.BIRed}{fil} already exists.{C.ColorOff}\n')
+                    print(f'copied: {C.BIGreen}{fil}{C.ColorOff}')
+                else: print(f'copied: {C.BIRed}{fil} already exists.{C.ColorOff}')
                 # jnu.jsonFileSet.update(fil)
 
         print(f'creating: {C.BIGreen}JsonFiles.tar.gz{C.ColorOff}')
