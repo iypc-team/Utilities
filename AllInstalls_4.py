@@ -52,11 +52,11 @@ class AllInstalls4(object):
             self.initialGlobList = json.load(f)
 
         if not exists(self.planetsPath):
-            tff.extractTarfiles('OriginalPlanets.tar.gz')
+            tff.extractTarfile('OriginalPlanets.tar.gz')
         if not exists(self.generatorPath):
-            tff.extractTarfiles('DataGenerator5.tar.gz')
+            tff.extractTarfile('DataGenerator5.tar.gz')
         if not exists(self.testPath):
-            tff.extractTarfiles('images.tar.gz')
+            tff.extractTarfile('images.tar.gz')
             print()
 
         # self.listJsonFiles()
