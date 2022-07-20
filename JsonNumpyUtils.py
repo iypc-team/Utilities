@@ -17,7 +17,7 @@ from os.path import *
 
 class Parent(object):
     def __init__(self):
-        print(f"{C.BIGreen}parent{C.ColorOff}")
+        print(f"{C.BIGreen}Parent{C.ColorOff}")
         self.pp = pprint.PrettyPrinter()
         try: self.created=self.inspectJsonFile(
             'JsonUtilsCreationDate.json')
@@ -187,7 +187,7 @@ class JsonNumpyUtils(NumpyArrayEncoder, DecodeToNumpy):
     def __init__(self):
         print(f"{C.BIGreen}JsonNumpyUtils{C.ColorOff}")
         self.__all__ = self.getMethodList()
-        self.mro = 'Class Resolution order: JsonNumpyUtils left right parent'
+        self.mro = 'Class Resolution order: JsonNumpyUtils left right Parent'
         super(JsonNumpyUtils, self).__init__()
         
     def getMethodList(self, silent=True):

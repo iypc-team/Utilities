@@ -77,8 +77,8 @@ class AllInstalls4(object):
         if not self.checkPackageAvailability('numpy', silent=False):
             self.silentSystemCall(
             ["pip3", "install", "-q", "-U", "numpy"])
-        print(f'{C.BIYellow}Pre installs completed…{C.ColorOff}')
         self.printTime(start)
+        print(f'{C.BIYellow}Pre installs completed…{C.ColorOff}')
         
         self.ai4 = AllInstalls4
         super(object, self).__init__()
@@ -419,6 +419,6 @@ class AllInstalls4(object):
             return False
         else:
             if not silent:
-                print(f'{C.BIGreen}{packageName} is installed{C.ColorOff}')
+                print(f'{C.BICyan}{packageName} is installed{C.ColorOff}')
             return True
 ai4 = AllInstalls4()
