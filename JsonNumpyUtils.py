@@ -12,7 +12,7 @@ except ModuleNotFoundError:
     ai4.getNumpy()
     import numpy
     import numpy as np
-from json import JSONEncoder
+from json import JSONEncoder, JSONDecoder, JSONDecodeError
 from os.path import *
 
 class Parent(object):
@@ -206,5 +206,19 @@ class JsonNumpyUtils(NumpyArrayEncoder, DecodeToNumpy):
             for method in method_list:
                 print(method)
         return method_list
+    
+    def sleepyTime(self):
+        from IPython.display import clear_output
+        import time
+        count=0
+        try:
+            while count <= 120:
+                print(f'sleeping for {count} minutes')
+                time.sleep(60)
+                count+=1
+                if count % 5 == 0:
+                    clear_output()
+        except KeyboardInterrupt:
+            clear_output()
         
 jnu=JsonNumpyUtils()
