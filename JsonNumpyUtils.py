@@ -15,8 +15,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
 from time import perf_counter, sleep
 
-
-
 contentPath=os.getcwd()
 jsonPath=join(contentPath, 'initialGlobList.json')
 
@@ -33,6 +31,10 @@ else: pass
 class ParentUtils(object):
     def __init__(self):
         print(f"{C.BIGreen}ParentUtils{C.ColorOff}")
+        if pip.__version__ <= '22.0.4':
+            print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
+            self.systemCall(["pip3", "install", "-q", "-U", "pip"])
+            
         self.pp = pprint.PrettyPrinter()
         try: self.created=self.inspectJsonFile(
             'JsonUtilsCreationDate.json')
@@ -235,5 +237,44 @@ class JsonNumpyUtils(NumpyArrayEncoder, DecodeToNumpy):
                     clear_output()
         except KeyboardInterrupt:
             clear_output()
-        
+    def silentSystemCall(self, command, silent=True):
+        """
+        params:
+            command: list of strings, `["pip3", "install", "-q", "-U", "pip"]`
+            if not silent...
+            returns: output, success
+        """
+        try:
+            output = check_output(command, stderr=STDOUT).decode()
+            success = True 
+        except CalledProcessError as e:
+            output = e.output.decode()
+            success = False
+        if not silent:
+            print(command)
+            if success:
+                print(f'success: {C.BIGreen}{success}{C.ColorOff}\n{output}')
+            elif not success:
+                print(f'success: {C.BIRed}{success}{C.ColorOff}\n{output}')
+            return output, success
+
+
+    def systemCall(self, command):
+        """ 
+        params:
+            command: list of strings, ex. `["pip3", "install", "-q", "-U", "pip"]`
+        returns: output, success
+        """
+        try:
+            output = check_output(command, stderr=STDOUT).decode()
+            success = True 
+        except CalledProcessError as e:
+            output = e.output.decode()
+            success = False
+        print(command)
+        if success:
+            print(f'success: {C.BIGreen}{success}{C.ColorOff}\n{output}')
+        elif not success:
+            print(f'success: {C.BIRed}{success}{C.ColorOff}\n{output}')
+        return output, success
 jnu=JsonNumpyUtils()
