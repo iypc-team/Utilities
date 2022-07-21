@@ -2,22 +2,28 @@ from __future__ import absolute_import
 from IPython.display import clear_output
 from BashColors import C
 import glob, os, shutil, tarfile
-from os.path import abspath
+from os.path import *
 
 class TarfileFunctions(object):
-    # from IPython.display import clear_output
-    # from BashColors import C
-    # import glob, os, shutil, tarfile
-    # from os.path import abspath
-    
+    '''tarfile utilities'''
     def __init__(self):
-        print(f"{C.BIGreen}AllInstalls4{C.ColorOff}")
+        print(f"{C.BIGreen}TarfileFunctions{C.ColorOff}")
         self.__all__ = self.getMethodList()
         self.contentPath = os.getcwd()
-        
         self.tff = TarfileFunctions
         self.tarfileList=[]
         self.tarfilePathList=[]
+        
+        self.planetsPath = join(self.contentPath, 'planets')
+        self.generatorPath = join(self.contentPath, 'DataGenerator')
+        self.testPath = join(self.contentPath, 'images')
+        if not exists(self.planetsPath):
+            self.extractTarfile('OriginalPlanets.tar.gz')
+        if not exists(self.generatorPath):
+            self.extractTarfile('DataGenerator5.tar.gz')
+        if not exists(self.testPath):
+            self.extractTarfile('images.tar.gz')
+        
         super(object, self).__init__()
 
     def __iter__(self):
@@ -28,7 +34,7 @@ class TarfileFunctions(object):
         return "%s(%r)" % (self.__class__, self.__dict__)
     
     def getMethodList(self, silent=True):
-        '''List all methods in AllInstalls4\n Print silent = True'''
+        '''List all methods in TarfileFunctions\n Print silent = True'''
         method_list=[]
         for attribute in dir(self):
             # Get the attribute value
@@ -39,7 +45,7 @@ class TarfileFunctions(object):
                 if attribute.startswith('__') == False:
                     method_list.append(attribute)
         if not silent:
-            print(f'{len(method_list)} callable methods in AllInstalls4')
+            print(f'{len(method_list)} methods in TarfileFunctions')
             for method in method_list:
                 print(method)
         return method_list
@@ -62,16 +68,20 @@ class TarfileFunctions(object):
         if not output_filename.endswith('.tar.gz'):
             print(f'{output_filename} must endwith .tar.gz')
             return '.tar.gz'
+        if source_dir == self.contentPath:
+            print(f'can not tar from directory: {source_dir}')
+            return
         print(source_dir)
         print(os.path.basename(source_dir))
         with tarfile.open(output_filename, "w:gz") as tar:
             # pass
             tar.add(source_dir, arcname=os.path.basename(source_dir))
 
-    def extractTarfile(self, fileName):
+    def extractTarfile(self, fileName, silent=True):
         '''Extracts single tar file'''
         fil=os.path.basename(fileName)
-        print(f'extracting: {fil}')
+        if not silent:
+            print(f'extracting: {fil}')
         tar = tarfile.open(fil, 'r:gz')
         tar.extractall()
         tar.close()
@@ -99,4 +109,3 @@ class TarfileFunctions(object):
         # fp.close()
         
 tff = TarfileFunctions()
-tff.__all__

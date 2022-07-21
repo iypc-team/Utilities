@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals
 from BashColors import C
-from TarfileFunctions import *
 
 from subprocess import check_output, CalledProcessError, STDOUT
 import concurrent.futures, glob, json, pip, os, sys
@@ -12,10 +11,6 @@ from time import perf_counter, sleep
 
 contentPath=os.getcwd()
 jsonPath=join(contentPath, 'initialGlobList.json')
-
-if exists(jsonPath):
-    os.remove(jsonPath)
-    pass
 
 if not exists(jsonPath):
     initialGlobList=glob.glob('**', recursive=True)
@@ -32,6 +27,7 @@ class AllInstalls4(object):
     ''' '''
     def __init__(self):
         print(f'{C.BIGreen}AllInstalls4{C.ColorOff}')
+        print(f'{C.BIPurple}updating pip {C.ColorOff}')
         self.systemCall(["pip3", "install", "-q", "-U", "pip"])
         # if pip.__version__ != '22.0.4':
             # self.systemCall(["pip3", "install", "pip==22.0.4"])
@@ -40,23 +36,11 @@ class AllInstalls4(object):
         self.__all__ = self.getMethodList()
 
         self.contentPath = os.getcwd()
-        self.generatorPath = join(self.contentPath, 'DataGenerator')
-        self.testPath = join(self.contentPath, 'images')
         self.initialGlobPth = join(self.contentPath, 'initialGlobList.json')
-        self.modelPath = join(self.contentPath, 'Defcon4_fp16.tflite')
-        self.imagePath = join(self.contentPath, '3b7d7d8a64.jpg')
-        self.planetsPath = join(self.contentPath, 'planets')
         self.initialGlobList:list
         with open("initialGlobList.json", 'r') as f:
             self.initialGlobList = json.load(f)
-
-        if not exists(self.planetsPath):
-            tff.extractTarfile('OriginalPlanets.tar.gz')
-        if not exists(self.generatorPath):
-            tff.extractTarfile('DataGenerator5.tar.gz')
-        if not exists(self.testPath):
-            tff.extractTarfile('images.tar.gz')
-
+            
         # self.listJsonFiles()
         self.jsonFilesPath = join(self.contentPath, 'jsonFiles')
         if not os.path.exists(self.jsonFilesPath):
@@ -65,9 +49,10 @@ class AllInstalls4(object):
         print(f'{C.BIYellow}Pre installing modules{C.ColorOff}')
         start = perf_counter()
         if not self.checkPackageAvailability('tfx', silent=False):
-            self.systemCall(["pip3", "install", "-q", "-U", "tfx"])
+            self.systemCall(
+                ["pip3", "install", "-q", "-U", "tfx"])
         if not self.checkPackageAvailability('matplotlib', silent=False):
-            self.silentSystemCall(
+            self.systemCall(
                 ["pip3", "install", "-q", "-U", "matplotlib"])
         if not self.checkPackageAvailability('opencv-python-headless', silent=False):
             self.systemCall(
