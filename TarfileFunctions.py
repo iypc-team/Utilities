@@ -65,14 +65,17 @@ class TarfileFunctions(object):
             
     def tarfileFromDirectory(self, output_filename, source_dir):
         '''creates new tar file from given directory'''
+        if not output_filename.__contains__('.'):
+            output_filename = output_filename + '.tar.gz'
         if not output_filename.endswith('.tar.gz'):
-            print(f'{output_filename} must endwith .tar.gz')
+            print(f'{C.BIRed}{output_filename} must endwith .tar.gz{C.ColorOff}')
             return '.tar.gz'
         if source_dir == self.contentPath:
-            print(f'can not tar from directory: {source_dir}')
+            print(f'{C.BIRed}can not tar from directory:{C.ColorOff} {source_dir}')
             return
-        print(source_dir)
+        print('source_dir:', source_dir)
         print(os.path.basename(source_dir))
+        print('created',os.path.basename(source_dir))
         with tarfile.open(output_filename, "w:gz") as tar:
             # pass
             tar.add(source_dir, arcname=os.path.basename(source_dir))
