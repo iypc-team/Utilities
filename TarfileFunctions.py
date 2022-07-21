@@ -13,6 +13,7 @@ class TarfileFunctions(object):
         self.tff = TarfileFunctions
         self.tarfileList=[]
         self.tarfilePathList=[]
+        self.listTarfiles()
         
         self.planetsPath = join(self.contentPath, 'planets')
         self.generatorPath = join(self.contentPath, 'DataGenerator')
@@ -50,18 +51,21 @@ class TarfileFunctions(object):
                 print(method)
         return method_list
     
-    def listTarfiles(self):
+    def listTarfiles(self, silent=True):
         '''List all local tar files'''
-        print(f'Available tar files:')
+        if not silent:
+            print(f'Available tar files:')
         tarfile_list = glob.glob('**', recursive=True)
         for fil in sorted(tarfile_list):
             if fil.endswith('.gz'):
                 fil=os.path.basename(fil)
                 fullPth = os.path.abspath(fil)
-                print(f'{C.IPurple}{fil}{C.ColorOff}')
-                print(f'{C.Green}{fullPth}{C.ColorOff}\n')
+                if not silent:
+                    print(f'{C.IPurple}{fil}{C.ColorOff}')
+                    print(f'{C.Green}{fullPth}{C.ColorOff}\n')
                 self.tarfileList.append(fil)
                 self.tarfilePathList.append(fullPth)
+                
             
     def tarfileFromDirectory(self, output_filename, source_dir):
         '''creates new tar file from given directory'''
@@ -73,12 +77,16 @@ class TarfileFunctions(object):
         if source_dir == self.contentPath:
             print(f'{C.BIRed}can not tar from directory:{C.ColorOff} {source_dir}')
             return
-        print('source_dir:', source_dir)
-        print(os.path.basename(source_dir))
-        print('created',os.path.basename(source_dir))
+        # print('source_dir:', source_dir)
+        # print('basename(source_dir)', os.path.basename(source_dir))
+        file_name = os.path.basename(source_dir) + '.tar.gz'
+        # print(file_name)
+        
         with tarfile.open(output_filename, "w:gz") as tar:
             # pass
             tar.add(source_dir, arcname=os.path.basename(source_dir))
+        if exists(join(tff.contentPath, file_name)):
+                  print(f'{C.BIGreen}created: {file_name}{C.ColorOff}')
 
     def extractTarfile(self, fileName, silent=True):
         '''Extracts single tar file'''
