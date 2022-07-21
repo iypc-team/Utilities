@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 from BashColors import C
 
 from subprocess import check_output, CalledProcessError, STDOUT
-import concurrent.futures, glob, json, pip, os, sys
+import concurrent.futures, glob, json, pip, os, sys, tarfile
 import pkg_resources
 from concurrent.futures import ThreadPoolExecutor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
@@ -27,12 +27,10 @@ class AllInstalls4(object):
     ''' '''
     def __init__(self):
         print(f'{C.BIGreen}AllInstalls4{C.ColorOff}')
-        print(f'{C.BIPurple}updating pip {C.ColorOff}')
-        self.systemCall(["pip3", "install", "-q", "-U", "pip"])
-        # if pip.__version__ != '22.0.4':
-            # self.systemCall(["pip3", "install", "pip==22.0.4"])
-        # else: pass
-            # print(f"pip: {C.BIPurple}{pip.__version__}{C.ColorOff}")
+        if pip.__version__ <= '22.0.4':
+            print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
+            self.systemCall(["pip3", "install", "-q", "-U", "pip"])
+            
         self.__all__ = self.getMethodList()
 
         self.contentPath = os.getcwd()
@@ -41,7 +39,6 @@ class AllInstalls4(object):
         with open("initialGlobList.json", 'r') as f:
             self.initialGlobList = json.load(f)
             
-        # self.listJsonFiles()
         self.jsonFilesPath = join(self.contentPath, 'jsonFiles')
         if not os.path.exists(self.jsonFilesPath):
             os.makedirs(self.jsonFilesPath)
@@ -64,6 +61,19 @@ class AllInstalls4(object):
         print(f'{C.BIYellow}Pre installs completed…{C.ColorOff}\n')
         
         self.ai4 = AllInstalls4
+        
+        self.planetsPath = join(self.contentPath, 'planets')
+        self.generatorPath = join(self.contentPath, 'DataGenerator')
+        self.testPath = join(self.contentPath, 'images')
+        if not exists(self.planetsPath):
+            self.extractTarfile('OriginalPlanets.tar.gz', silent=False)
+        if not exists(self.generatorPath):
+            self.extractTarfile('DataGenerator5.tar.gz', silent=False)
+        if not exists(self.testPath):
+            self.extractTarfile('images.tar.gz', silent=False)
+            
+            # self.extractTarfile('images.tar.gz'), silent=False)
+        
         super(object, self).__init__()
 
     def __iter__(self):
@@ -72,6 +82,15 @@ class AllInstalls4(object):
         return len(self.name)
     def __str__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
+    
+    def extractTarfile(self, fileName, silent=True):
+        '''Extracts single tar file'''
+        fil=os.path.basename(fileName)
+        if not silent:
+            print(f'extracting: {fil}')
+        tar = tarfile.open(fil, 'r:gz')
+        tar.extractall()
+        tar.close()
 
     def getMethodList(self, silent=True):
         '''List all methods in AllInstall\n Print silent = True'''
