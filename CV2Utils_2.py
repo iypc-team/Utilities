@@ -2,6 +2,7 @@
 # updated 02/26/2022
 from __future__ import absolute_import, division
 from AllInstalls_4 import *
+
 try: import cv2
 except ModuleNotFoundError: 
     ai4.getCV2()
@@ -22,7 +23,7 @@ except ModuleNotFoundError:
     ai4.getTensorflow()
     import tensorflow as tf
     
-import os, uuid
+import os, pip, uuid
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
 from time import sleep, perf_counter, perf_counter_ns
@@ -33,6 +34,9 @@ class CV2Utils(object):
     ''' '''
     def __init__(self):
         print(f"{C.BIGreen}CV2Utils{C.ColorOff}")
+        if pip.__version__ <= '22.0.4':
+            print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
+            self.systemCall(["pip3", "install", "-q", "-U", "pip"])
         self.cvu = CV2Utils
         self.__all__ = self.getMethodList()
         self.updated = 'updated: 02/26/2022'
