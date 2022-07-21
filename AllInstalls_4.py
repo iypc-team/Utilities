@@ -20,8 +20,7 @@ if not exists(jsonPath):
         pass
     with open('initialGlobList.json', 'w', encoding='utf-8') as f:
         json.dump(initialGlobList, f, ensure_ascii=False, indent='\t')
-else:
-    pass
+else: pass
 
 class AllInstalls4(object):
     ''' '''

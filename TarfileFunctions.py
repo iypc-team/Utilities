@@ -1,13 +1,35 @@
-from __future__ import absolute_import
-from IPython.display import clear_output
+from __future__ import absolute_import, unicode_literals
 from BashColors import C
-import glob, os, shutil, tarfile
+
+from subprocess import check_output, CalledProcessError, STDOUT
+import concurrent.futures, glob, json, pip, os, sys, tarfile
+import pkg_resources
+from concurrent.futures import ThreadPoolExecutor
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
+from time import perf_counter, sleep
+
+contentPath=os.getcwd()
+jsonPath=join(contentPath, 'initialGlobList.json')
+
+if not exists(jsonPath):
+    initialGlobList=glob.glob('**', recursive=True)
+    initialGlobList=glob.glob('**', recursive=True)
+    if not 'initialGlobList.json' in initialGlobList:
+        # initialGlobList.append('initialGlobList.json')
+        pass
+    with open('initialGlobList.json', 'w', encoding='utf-8') as f:
+        json.dump(initialGlobList, f, ensure_ascii=False, indent='\t')
+else:
+    pass
 
 class TarfileFunctions(object):
     '''tarfile utilities'''
     def __init__(self):
         print(f"{C.BIGreen}TarfileFunctions{C.ColorOff}")
+        if pip.__version__ <= '22.0.4':
+            print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
+            self.systemCall(["pip3", "install", "-q", "-U", "pip"])
         self.__all__ = self.getMethodList()
         self.contentPath = os.getcwd()
         self.tff = TarfileFunctions
@@ -33,6 +55,46 @@ class TarfileFunctions(object):
         return len(self.name)
     def __str__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
+    
+    def silentSystemCall(self, command, silent=True):
+        """
+        params:
+            command: list of strings, `["pip3", "install", "-q", "-U", "pip"]`
+            if not silent...
+            returns: output, success
+        """
+        try:
+            output = check_output(command, stderr=STDOUT).decode()
+            success = True 
+        except CalledProcessError as e:
+            output = e.output.decode()
+            success = False
+        if not silent:
+            print(command)
+            if success:
+                print(f'success: {C.BIGreen}{success}{C.ColorOff}\n{output}')
+            elif not success:
+                print(f'success: {C.BIRed}{success}{C.ColorOff}\n{output}')
+            return output, success
+        
+    def systemCall(self, command):
+        """ 
+        params:
+            command: list of strings, ex. `["pip3", "install", "-q", "-U", "pip"]`
+        returns: output, success
+        """
+        try:
+            output = check_output(command, stderr=STDOUT).decode()
+            success = True 
+        except CalledProcessError as e:
+            output = e.output.decode()
+            success = False
+        print(command)
+        if success:
+            print(f'success: {C.BIGreen}{success}{C.ColorOff}\n{output}')
+        elif not success:
+            print(f'success: {C.BIRed}{success}{C.ColorOff}\n{output}')
+        return output, success
     
     def getMethodList(self, silent=True):
         '''List all methods in TarfileFunctions\n Print silent = True'''
@@ -66,7 +128,6 @@ class TarfileFunctions(object):
                 self.tarfileList.append(fil)
                 self.tarfilePathList.append(fullPth)
                 
-            
     def tarfileFromDirectory(self, output_filename, source_dir):
         '''creates new tar file from given directory'''
         if not output_filename.__contains__('.'):
