@@ -1,23 +1,38 @@
 from __future__ import absolute_import, unicode_literals
-from AllInstalls_4 import *
 from BashColors import C
-from TarfileFunctions import *
 
 from subprocess import check_output, CalledProcessError, STDOUT
 import glob, json, os, pprint
-try: 
-    import numpy
-    import numpy as np
-except ModuleNotFoundError:
-    ai4.getNumpy()
-    import numpy
-    import numpy as np
+
 from json import JSONEncoder, JSONDecoder, JSONDecodeError
 from os.path import *
 
-class Parent(object):
+from subprocess import check_output, CalledProcessError, STDOUT
+import concurrent.futures, glob, json, pip, os, sys, tarfile
+import pkg_resources
+from concurrent.futures import ThreadPoolExecutor
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
+from os.path import *
+from time import perf_counter, sleep
+
+
+
+contentPath=os.getcwd()
+jsonPath=join(contentPath, 'initialGlobList.json')
+
+if not exists(jsonPath):
+    initialGlobList=glob.glob('**', recursive=True)
+    initialGlobList=glob.glob('**', recursive=True)
+    if not 'initialGlobList.json' in initialGlobList:
+        # initialGlobList.append('initialGlobList.json')
+        pass
+    with open('initialGlobList.json', 'w', encoding='utf-8') as f:
+        json.dump(initialGlobList, f, ensure_ascii=False, indent='\t')
+else: pass
+
+class ParentUtils(object):
     def __init__(self):
-        print(f"{C.BIGreen}Parent{C.ColorOff}")
+        print(f"{C.BIGreen}ParentUtils{C.ColorOff}")
         self.pp = pprint.PrettyPrinter()
         try: self.created=self.inspectJsonFile(
             'JsonUtilsCreationDate.json')
@@ -62,7 +77,7 @@ class Parent(object):
                 if not silent:
                     print(f'{C.ColorOff}{fil}{C.ColorOff}')
         else: print(f'{C.BIRed}No JSON files exist.{C.ColorOff}')
-        return json_files
+        # return json_files
             
     def createJsonFile(self, name:str, input_data:any):
             ''' '''
@@ -133,9 +148,9 @@ class Parent(object):
                 else: print(f"{C.BIRed}MD5 verification failed!{C.ColorOff}")
                 return md5_returned
         
-        super(Parent, self).__init__()
+        super(ParentUtils, self).__init__()
 
-class NumpyArrayEncoder(Parent):
+class NumpyArrayEncoder(ParentUtils):
     """
     - Serializes python/Numpy objects via customizing json encoder.
     - **Usage**
@@ -159,7 +174,7 @@ class NumpyArrayEncoder(Parent):
             return super(NumpyArrayEncoder, self).default(obj)
         
 
-class DecodeToNumpy(Parent):
+class DecodeToNumpy(ParentUtils):
     """
     - Serializes python/Numpy objects via customizing json encoder.
     - **Usage**
@@ -187,7 +202,7 @@ class JsonNumpyUtils(NumpyArrayEncoder, DecodeToNumpy):
     def __init__(self):
         print(f"{C.BIGreen}JsonNumpyUtils{C.ColorOff}")
         self.__all__ = self.getMethodList()
-        self.mro = 'Class Resolution order: JsonNumpyUtils left right Parent'
+        self.mro = 'Class Resolution order: JsonNumpyUtils left right ParentUtils'
         super(JsonNumpyUtils, self).__init__()
         
     def getMethodList(self, silent=True):
