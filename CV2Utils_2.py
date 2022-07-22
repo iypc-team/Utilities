@@ -1,26 +1,28 @@
 # 9/22/2021
 # updated 02/26/2022
-from __future__ import absolute_import, division, unicode_literals
+from __future__ import absolute_import, unicode_literals
 from BashColors import C
 
-try: import cv2
-except ModuleNotFoundError: pass
-    
-try: import numpy as np
-except ModuleNotFoundError: pass
-
-try: from matplotlib import pyplot as plt
-except ModuleNotFoundError: pass
-    
-try: import tensorflow as tf
-except ModuleNotFoundError: pass
-    
-import os, pip, uuid
+from subprocess import check_output, CalledProcessError, STDOUT
+import concurrent.futures, glob, json, pip, os, shutil, sys, tarfile
 import pkg_resources
+from concurrent.futures import ThreadPoolExecutor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
-from subprocess import check_output, CalledProcessError, STDOUT
-from time import sleep, perf_counter, perf_counter_ns
+from time import perf_counter, sleep
+
+contentPath=os.getcwd()
+jsonPath=join(contentPath, 'initialGlobList.json')
+
+if not exists(jsonPath):
+    initialGlobList=glob.glob('**', recursive=True)
+    initialGlobList=glob.glob('**', recursive=True)
+    if not 'initialGlobList.json' in initialGlobList:
+        # initialGlobList.append('initialGlobList.json')
+        pass
+    with open('initialGlobList.json', 'w', encoding='utf-8') as f:
+        json.dump(initialGlobList, f, ensure_ascii=False, indent='\t')
+else: pass
 
 class CV2Utils(object):
     ''' '''
@@ -47,14 +49,14 @@ class CV2Utils(object):
         # self.printTime(start)
         print(f'{C.BIYellow}Pre installs completed…{C.ColorOff}\n')
         
-        
+        import numpy
         self.cvu = CV2Utils
         self.__all__ = self.getMethodList()
         self.updated = 'updated: 02/26/2022'
         # print(f'{C.BIPurple}{self.updated}{C.ColorOff}')
         self.contentPath = os.getcwd()
-        self.zeroPixel = np.array([0,0,0])
-        # self.originalImageZeroPixel = np.array([0,0,0])
+        self.zeroPixel = numpy.array([0,0,0])
+        # self.originalImageZeroPixel = numpy.array([0,0,0])
         self.originalImageZeroPixel = None
         super(object, self).__init__()
         
@@ -226,7 +228,7 @@ class CV2Utils(object):
 
     def createImageWithColor(self, pxColor, silent=True):
         '''return save_path'''
-        bgImage = np.zeros(shape=[224,224,3], dtype=np.uint8)
+        bgImage = numpy.zeros(shape=[224,224,3], dtype=numpy.uint8)
         save_path = join(self.contentPath, 'bgImage.png')
 
         for px in bgImage:
@@ -266,7 +268,7 @@ class CV2Utils(object):
     def rotateImage(self, thisImage,
                     angle=0, rotPoint=None, scale=1, silent=True):
         '''return rotImage'''
-        thisImage = np.copy(thisImage)
+        thisImage = numpy.copy(thisImage)
         zeroPixel = thisImage[[0][0]]
         width, height, _ = thisImage.shape
         if rotPoint == None:
@@ -288,9 +290,9 @@ class CV2Utils(object):
     def translateImage(self, thisImage, x=0, y=0, silent=True):
         '''-x shift left -y shift up\nx shift right y shift down\n
         return newImage'''
-        thisImage = np.copy(thisImage)
+        thisImage = numpy.copy(thisImage)
         zeroPixel=thisImage[0][0]
-        translateMatrix = np.float32([[1,0,x],[0,1,y]])
+        translateMatrix = numpy.float32([[1,0,x],[0,1,y]])
         dimentions = (thisImage.shape[1], thisImage.shape[0])
         newImage = cv2.warpAffine(thisImage, translateMatrix, dimentions)
 
@@ -333,7 +335,7 @@ class CV2Utils(object):
         original_image = cv2.imread(path, cv2.IMREAD_COLOR)
         originalZeroPixel = original_image[0][0]
         plt.imshow(original_image)
-        newImg = np.copy(original_image)
+        newImg = numpy.copy(original_image)
 
         zeroPixel = newImg[0][0]
         print('newImg zeroPixel:', zeroPixel)
@@ -364,7 +366,7 @@ class CV2Utils(object):
         zp = thisImage[0][0]
         bgImagePath = self.cv2CreateImageWithColor(pxColor=cvu.zeroPixel)
         # print(zp)
-        img1 = np.copy(thisImage)
+        img1 = numpy.copy(thisImage)
         img2 = cv2.imread(bgImagePath, cv2.IMREAD_COLOR)
         filledImage = cv2.bitwise_or(img1, img2)
         filledImage = cv2.bitwise_or(filledImage, img2)
@@ -477,14 +479,14 @@ class CV2Utils(object):
 
     def fillImage(self, thisImage, silent=True):
         ''' '''
-        original_image = np.copy(thisImage)
-        img = np.copy(original_image)
+        original_image = numpy.copy(thisImage)
+        img = numpy.copy(original_image)
 
-        black = np.where((img[:,:,0]==0) & 
+        black = numpy.where((img[:,:,0]==0) & 
                          (img[:,:,1]==0) & 
                          (img[:,:,2]==0))
         
-        white = np.where((img[:,:,0]==255) & 
+        white = numpy.where((img[:,:,0]==255) & 
                          (img[:,:,1]==255) & 
                          (img[:,:,2]==255))
         
@@ -505,14 +507,14 @@ class CV2Utils(object):
     
     def fillImage2(self, thisImage, silent=True):
         ''' '''
-        original_image = np.copy(thisImage)
-        img = np.copy(original_image)
+        original_image = numpy.copy(thisImage)
+        img = numpy.copy(original_image)
 
-        black = np.where((img[:,:,0]==0) &
+        black = numpy.where((img[:,:,0]==0) &
                          (img[:,:,1]==0) &
                          (img[:,:,2]==0))
 
-        white = np.where((img[:,:,0]==255) &
+        white = numpy.where((img[:,:,0]==255) &
                          (img[:,:,1]==255) &
                          (img[:,:,2]==255))
 
@@ -524,7 +526,7 @@ class CV2Utils(object):
 
     def fillImage2X(self, thisImage, silent=True):
         ''' '''
-        imageCopy = np.copy(thisImage)
+        imageCopy = numpy.copy(thisImage)
         intermediateImage = self.fillImage(imageCopy)
         cleanImage = self.fillImage(intermediateImage)
         if not silent:
