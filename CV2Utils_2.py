@@ -1,32 +1,26 @@
 # 9/22/2021
 # updated 02/26/2022
-from __future__ import absolute_import, division
+from __future__ import absolute_import, division, unicode_literals
+from BashColors import C
 
 try: import cv2
-except ModuleNotFoundError: 
-    ai4.getCV2()
-    import cv2
+except ModuleNotFoundError: pass
     
 try: import numpy as np
-except ModuleNotFoundError:
-    ai4.getNumpy()
-    import numpy as np
+except ModuleNotFoundError: pass
 
 try: from matplotlib import pyplot as plt
-except ModuleNotFoundError:
-    ai4.getMatplotlib()
-    from matplotlib import pyplot as plt
+except ModuleNotFoundError: pass
     
 try: import tensorflow as tf
-except ModuleNotFoundError:
-    ai4.getTensorflow()
-    import tensorflow as tf
+except ModuleNotFoundError: pass
     
 import os, pip, uuid
+import pkg_resources
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
+from subprocess import check_output, CalledProcessError, STDOUT
 from time import sleep, perf_counter, perf_counter_ns
-from BashColors import C
 
 class CV2Utils(object):
     ''' '''
@@ -35,6 +29,25 @@ class CV2Utils(object):
         if pip.__version__ <= '22.0.4':
             print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
             self.systemCall(["pip3", "install", "-q", "-U", "pip"])
+        
+        print(f'{C.BIYellow}Pre installing modules{C.ColorOff}')
+        start = perf_counter()
+        if not self.checkPackageAvailability('tfx', silent=False):
+            self.systemCall(
+                ["pip3", "install", "-q", "-U", "tfx"])
+        if not self.checkPackageAvailability('matplotlib', silent=False):
+            self.systemCall(
+                ["pip3", "install", "-q", "-U", "matplotlib"])
+        if not self.checkPackageAvailability('opencv-python-headless', silent=False):
+            self.systemCall(
+                ["pip3", "install", "-q","-U", "opencv-python-headless"])
+        if not self.checkPackageAvailability('numpy', silent=False):
+            self.systemCall(
+                ["pip3", "install", "-q", "-U", "numpy"])
+        # self.printTime(start)
+        print(f'{C.BIYellow}Pre installs completed…{C.ColorOff}\n')
+        
+        
         self.cvu = CV2Utils
         self.__all__ = self.getMethodList()
         self.updated = 'updated: 02/26/2022'
@@ -521,4 +534,21 @@ class CV2Utils(object):
                 cleanImage, edges,
                 title1='cleaned image', title2='edges')
         return cleanImage
+    
+    def checkPackageAvailability(self, packageName:str, silent=True):
+        packageName=str(packageName)
+        '''checks for package availability returns:boolean True/False'''
+        installed_packages = pkg_resources.working_set
+        packagesList = sorted(
+            ["%s" % i.key for i in installed_packages]
+        )
+        if not packageName in packagesList:
+            if  not silent:
+                print(f'{C.BIPurple}{packageName} is not installed{C.ColorOff}')
+            return False
+        else:
+            if not silent:
+                print(f'{C.BICyan}{packageName} is installed{C.ColorOff}')
+            return True
+        
 cvu = CV2Utils()
