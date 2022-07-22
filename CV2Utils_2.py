@@ -1,7 +1,6 @@
 # 9/22/2021
 # updated 02/26/2022
 from __future__ import absolute_import, division
-from AllInstalls_4 import *
 
 try: import cv2
 except ModuleNotFoundError: 
@@ -28,7 +27,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
 from time import sleep, perf_counter, perf_counter_ns
 from BashColors import C
-from TarfileFunctions import *
 
 class CV2Utils(object):
     ''' '''
@@ -56,6 +54,46 @@ class CV2Utils(object):
     def __iter__(self):
         for key in self.some_sequence:
             yield (key, 'Value for {}'.format(key))
+            
+    def silentSystemCall(self, command, silent=True):
+        """
+        params:
+            command: list of strings, `["pip3", "install", "-q", "-U", "pip"]`
+            if not silent...
+            returns: output, success
+        """
+        try:
+            output = check_output(command, stderr=STDOUT).decode()
+            success = True 
+        except CalledProcessError as e:
+            output = e.output.decode()
+            success = False
+        if not silent:
+            print(command)
+            if success:
+                print(f'success: {C.BIGreen}{success}{C.ColorOff}\n{output}')
+            elif not success:
+                print(f'success: {C.BIRed}{success}{C.ColorOff}\n{output}')
+            return output, success
+        
+    def systemCall(self, command):
+        """ 
+        params:
+            command: list of strings, ex. `["pip3", "install", "-q", "-U", "pip"]`
+        returns: output, success
+        """
+        try:
+            output = check_output(command, stderr=STDOUT).decode()
+            success = True 
+        except CalledProcessError as e:
+            output = e.output.decode()
+            success = False
+        print(command)
+        if success:
+            print(f'success: {C.BIGreen}{success}{C.ColorOff}\n{output}')
+        elif not success:
+            print(f'success: {C.BIRed}{success}{C.ColorOff}\n{output}')
+        return output, success
         
     def getMethodList(self, silent=True):
         '''List all methods in JsonNumpyUtils\n Print silent = True'''

@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 from BashColors import C
 
 from subprocess import check_output, CalledProcessError, STDOUT
-import concurrent.futures, glob, json, pip, os, sys, tarfile
+import concurrent.futures, glob, json, pip, os, shutil, sys, tarfile
 import pkg_resources
 from concurrent.futures import ThreadPoolExecutor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
