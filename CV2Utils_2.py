@@ -1,16 +1,20 @@
-# 9/22/2021
-# updated 02/26/2022
+# created: 9/22/2021
+# updated: 07/23/2022
 from __future__ import absolute_import, unicode_literals
 from BashColors import C
 
 from subprocess import check_output, CalledProcessError, STDOUT
 import concurrent.futures, glob, json, pip, os, shutil, sys, tarfile
-import pkg_resources
+# import pkg_resources
 from concurrent.futures import ThreadPoolExecutor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
 from time import perf_counter, sleep
-
+if pip.__version__ <= '22.0.4':
+    print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
+    command = ["pip3", "install", "-q", "-U", "pip"]
+    output = check_output(command, stderr=STDOUT).decode()
+    
 try:
     import numpy
 except ModuleNotFoundError as err:
@@ -27,7 +31,7 @@ try:
     import cv2
 except ModuleNotFoundError as err:
     print(err)
-    command = opencv-python-headless
+    command = ["pip3", "install", "-q", "-U", "opencv-python-headless"]
     output = check_output(command, stderr=STDOUT).decode()
     
 try:
@@ -35,10 +39,11 @@ try:
 except ModuleNotFoundError as err:
     print(err)
     command = ["pip3", "install", "-q", "-U", "tfx"]
-    check_output(command, stderr=STDOUT).decode()
-    
+    output = check_output(command, stderr=STDOUT).decode()
+    print(output)
 import numpy
 import matplotlib
+from matplotlib import pyplot as plt
 import cv2
 import tensorflow
     
@@ -59,9 +64,6 @@ class CV2Utils(object):
     ''' '''
     def __init__(self):
         print(f"{C.BIGreen}CV2Utils{C.ColorOff}")
-        if pip.__version__ <= '22.0.4':
-            print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
-            self.systemCall(["pip3", "install", "-q", "-U", "pip"])
             
         self.cvu = CV2Utils
         self.__all__ = self.getMethodList()
