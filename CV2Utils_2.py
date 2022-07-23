@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
 from time import perf_counter, sleep
+
 if pip.__version__ <= '22.0.4':
     print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "pip"]
@@ -20,6 +21,7 @@ if pip.__version__ <= '22.0.4':
 try:
     import numpy
 except ModuleNotFoundError as err:
+    print(err)
     print(f'{C.BIPurple}installing numpy --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "numpy"]
     output = check_output(command, stderr=STDOUT).decode()
@@ -28,8 +30,8 @@ except ModuleNotFoundError as err:
 try:
     import matplotlib
 except ModuleNotFoundError as err:
-    print(f'{C.BIPurple}installing matplotlib --update{C.ColorOff}')
     print(err)
+    print(f'{C.BIPurple}installing matplotlib --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "matplotlib"]
     output = check_output(command, stderr=STDOUT).decode()
     print(f'{C.BIGreen}matplotlib --update complete{C.ColorOff}')
@@ -37,8 +39,8 @@ except ModuleNotFoundError as err:
 try:
     import cv2
 except ModuleNotFoundError as err:
-    print(f'{C.BIPurple}installing opencv-python-headless --update{C.ColorOff}')
     print(err)
+    print(f'{C.BIPurple}installing opencv-python-headless --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "opencv-python-headless"]
     output = check_output(command, stderr=STDOUT).decode()
     print(f'{C.BIGreen}opencv-python-headless--update complete{C.ColorOff}')
@@ -46,6 +48,7 @@ except ModuleNotFoundError as err:
 try:
     import tensorflow
 except ModuleNotFoundError as err:
+    print(err)
     print(f'{C.BIPurple}installing tfx --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "tfx"]
     output = check_output(command, stderr=STDOUT).decode()
