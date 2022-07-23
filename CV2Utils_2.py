@@ -6,6 +6,7 @@ from BashColors import C
 from subprocess import check_output, CalledProcessError, STDOUT
 import concurrent.futures, glob, json, pip, os, shutil, sys, tarfile
 # import pkg_resources
+
 from concurrent.futures import ThreadPoolExecutor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
@@ -14,33 +15,42 @@ if pip.__version__ <= '22.0.4':
     print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "pip"]
     output = check_output(command, stderr=STDOUT).decode()
+    print(f'{C.BIGreen}pip --update complete{C.ColorOff}')
     
 try:
     import numpy
 except ModuleNotFoundError as err:
-    print(err)
+    print(f'{C.BIPurple}installing numpy --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "numpy"]
     output = check_output(command, stderr=STDOUT).decode()
+    print(f'{C.BIGreen}numpy --update complete{C.ColorOff}')
+    
 try:
     import matplotlib
 except ModuleNotFoundError as err:
+    print(f'{C.BIPurple}installing matplotlib --update{C.ColorOff}')
     print(err)
     command = ["pip3", "install", "-q", "-U", "matplotlib"]
     output = check_output(command, stderr=STDOUT).decode()
+    print(f'{C.BIGreen}matplotlib --update complete{C.ColorOff}')
+    
 try:
     import cv2
 except ModuleNotFoundError as err:
+    print(f'{C.BIPurple}installing opencv-python-headless --update{C.ColorOff}')
     print(err)
     command = ["pip3", "install", "-q", "-U", "opencv-python-headless"]
     output = check_output(command, stderr=STDOUT).decode()
+    print(f'{C.BIGreen}opencv-python-headless--update complete{C.ColorOff}')
     
 try:
     import tensorflow
 except ModuleNotFoundError as err:
-    print(err)
+    print(f'{C.BIPurple}installing tfx --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "tfx"]
     output = check_output(command, stderr=STDOUT).decode()
-    print(output)
+    print(f'{C.BIGreen}tfx --update complete{C.ColorOff}')
+    
 import numpy
 import matplotlib
 from matplotlib import pyplot as plt
@@ -441,8 +451,7 @@ class CV2Utils(object):
             minutes = totalTime//60
             seconds = totalTime - (minutes * 60)
             seconds = round(seconds, 2)
-            print(
-                f'completed: {minutes} minutes {seconds} second(s)')
+            print(f'completed: {minutes} minutes {seconds} second(s)')
 
     def getCV2Image(self, imagePath:str):
         img = cv2.imread(imagePath, cv2.IMREAD_COLOR)
