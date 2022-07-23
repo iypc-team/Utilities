@@ -11,6 +11,37 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 from os.path import *
 from time import perf_counter, sleep
 
+try:
+    import numpy
+except ModuleNotFoundError as err:
+    print(err)
+    command = ["pip3", "install", "-q", "-U", "numpy"]
+    output = check_output(command, stderr=STDOUT).decode()
+try:
+    import matplotlib
+except ModuleNotFoundError as err:
+    print(err)
+    command = ["pip3", "install", "-q", "-U", "matplotlib"]
+    output = check_output(command, stderr=STDOUT).decode()
+try:
+    import cv2
+except ModuleNotFoundError as err:
+    print(err)
+    command = opencv-python-headless
+    output = check_output(command, stderr=STDOUT).decode()
+    
+try:
+    import tensorflow
+except ModuleNotFoundError as err:
+    print(err)
+    command = ["pip3", "install", "-q", "-U", "tfx"]
+    check_output(command, stderr=STDOUT).decode()
+    
+import numpy
+import matplotlib
+import cv2
+import tensorflow
+    
 contentPath=os.getcwd()
 jsonPath=join(contentPath, 'initialGlobList.json')
 
@@ -31,28 +62,10 @@ class CV2Utils(object):
         if pip.__version__ <= '22.0.4':
             print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
             self.systemCall(["pip3", "install", "-q", "-U", "pip"])
-        
-        print(f'{C.BIYellow}Pre installing modules{C.ColorOff}')
-        start = perf_counter()
-        if not self.checkPackageAvailability('tfx', silent=False):
-            self.systemCall(
-                ["pip3", "install", "-q", "-U", "tfx"])
-        if not self.checkPackageAvailability('matplotlib', silent=False):
-            self.systemCall(
-                ["pip3", "install", "-q", "-U", "matplotlib"])
-        if not self.checkPackageAvailability('opencv-python-headless', silent=False):
-            self.systemCall(
-                ["pip3", "install", "-q","-U", "opencv-python-headless"])
-        if not self.checkPackageAvailability('numpy', silent=False):
-            self.systemCall(
-                ["pip3", "install", "-q", "-U", "numpy"])
-        # self.printTime(start)
-        print(f'{C.BIYellow}Pre installs completed…{C.ColorOff}\n')
-        
-        import numpy
+            
         self.cvu = CV2Utils
         self.__all__ = self.getMethodList()
-        self.updated = 'updated: 02/26/2022'
+        self.updated = 'updated: 07/22/2022'
         # print(f'{C.BIPurple}{self.updated}{C.ColorOff}')
         self.contentPath = os.getcwd()
         self.zeroPixel = numpy.array([0,0,0])
@@ -228,6 +241,7 @@ class CV2Utils(object):
 
     def createImageWithColor(self, pxColor, silent=True):
         '''return save_path'''
+        import numpy
         bgImage = numpy.zeros(shape=[224,224,3], dtype=numpy.uint8)
         save_path = join(self.contentPath, 'bgImage.png')
 
