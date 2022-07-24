@@ -255,27 +255,22 @@ class CV2Utils(object):
         return output
 
     def createImageWithColor(self, pxColor, silent=True):
-        '''return save_path'''
+        """shape=[224,224,3]
+        silent=True
+        returns bgImage.png"""
         import numpy
         bgImage = numpy.zeros(shape=[224,224,3], dtype=numpy.uint8)
         save_path = join(self.contentPath, 'bgImage.png')
 
         for px in bgImage:
             bgImage[:] = pxColor
-            sleep(0.1)
+        sleep(0.1)
         cv2.imwrite(save_path, bgImage)
         
         if not silent:
             print(f'shape: {bgImage.shape}')
-            bgImage = cv2.imread(save_path, cv2.IMREAD_COLOR)
-            # bgImage = cv2.cvtColor(bgImage, cv2.COLOR_BGR2RGB)
-            try:
-                cv2_imshow(bgImage)
-                cv2.waitKey(100)
-                cv2.destroyAllWindows()
-            except:
-                self.plotShowSingleImage(bgImage, title1=basename(save_path))
-        return save_path
+            print(f'save path: {save_path}')
+        return bgImage
 
     def zoomImage(self, thisImage, scale=1, silent=True):
         '''return zoomImage'''
