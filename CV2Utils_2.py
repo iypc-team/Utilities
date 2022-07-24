@@ -16,7 +16,7 @@ if pip.__version__ <= '22.0.4':
     print(f'{C.BIPurple}installing pip --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "pip"]
     output = check_output(command, stderr=STDOUT).decode()
-    print(f'{C.BIGreen}pip --update complete{C.ColorOff}')
+    print(f'{C.BIGreen}pip --update complete{C.ColorOff}\n')
     
 try:
     import numpy
@@ -25,7 +25,7 @@ except ModuleNotFoundError as err:
     print(f'{C.BIPurple}installing numpy --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "numpy"]
     output = check_output(command, stderr=STDOUT).decode()
-    print(f'{C.BIGreen}numpy --update complete{C.ColorOff}')
+    print(f'{C.BIGreen}numpy --update complete{C.ColorOff}\n')
     
 try:
     import matplotlib
@@ -34,7 +34,7 @@ except ModuleNotFoundError as err:
     print(f'{C.BIPurple}installing matplotlib --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "matplotlib"]
     output = check_output(command, stderr=STDOUT).decode()
-    print(f'{C.BIGreen}matplotlib --update complete{C.ColorOff}')
+    print(f'{C.BIGreen}matplotlib --update complete{C.ColorOff}\n')
     
 try:
     import cv2
@@ -43,7 +43,7 @@ except ModuleNotFoundError as err:
     print(f'{C.BIPurple}installing opencv-python-headless --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "opencv-python-headless"]
     output = check_output(command, stderr=STDOUT).decode()
-    print(f'{C.BIGreen}opencv-python-headless--update complete{C.ColorOff}')
+    print(f'{C.BIGreen}opencv-python-headless--update complete{C.ColorOff}\n')
     
 try:
     import tensorflow
@@ -52,7 +52,7 @@ except ModuleNotFoundError as err:
     print(f'{C.BIPurple}installing tfx --update{C.ColorOff}')
     command = ["pip3", "install", "-q", "-U", "tfx"]
     output = check_output(command, stderr=STDOUT).decode()
-    print(f'{C.BIGreen}tfx --update complete{C.ColorOff}')
+    print(f'{C.BIGreen}tfx --update complete{C.ColorOff}\n')
     
 import numpy
 import matplotlib
