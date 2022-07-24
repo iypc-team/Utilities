@@ -254,8 +254,9 @@ class CV2Utils(object):
             cv2.imwrite(path, output)
         return output
 
-    def createImageWithColor(self, pxColor, silent=True):
-        """shape=[224,224,3]
+    def createImageWithColor(self, pxColor:int, silent=True):
+        """
+        initial shape: [224,224,3]
         silent=True
         returns bgImage.png"""
         import numpy
