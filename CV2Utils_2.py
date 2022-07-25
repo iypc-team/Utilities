@@ -173,7 +173,6 @@ class CV2Utils(object):
         # print(f'extension: {extension}')
         newPath = file_path + append + '.' + extension
         newPath = join(newPath)
-        
         return newPath
         
     def showTwoImages(self, img1, img2):
@@ -220,7 +219,7 @@ class CV2Utils(object):
         ax2.set_title(title2)
         plt.show()
 
-    def resizeImage(self,thisImage,newSize=(224,224),silent=False):
+    def resizeImage(self,thisImage,newSize=(224,224), silent=True):
         '''return resized_image'''
         '''aspect ratio is the proportional relationship of the width and the height of the image:'''
         # thisImage.shape
